@@ -1,0 +1,9 @@
+CREATE TABLE items (
+    ITEM_ID SERIAL,
+    SKU TEXT NOT NULL,
+    ITEM_DESCRIPTION TEXT DEFAULT NULL,
+    PRICE NUMERIC (5,2),
+    CREATED_DATE TIMESTAMPTZ NULL DEFAULT current_timestamp
+);
+
+select * from items;

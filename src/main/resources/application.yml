@@ -1,0 +1,109 @@
+spring:
+  profiles:
+    active: dev
+camel:
+  springboot:
+    shutdownTimeout: 10
+---
+spring:
+  profiles: mock
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/localDB
+    username: postgres
+    password: postgres
+    jdbc-url: jdbc:postgresql://localhost:5432/localDB
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: user_email
+    password: email_password
+    properties.mail.smtp.auth: true
+    properties.mail.smtp.starttls.enable: true
+mailTo: to_email
+mailFrom: from_email
+
+startRoute: direct:input
+fromRoute: file:data/input?delete=true&readLock=none&moveFailed=error
+toRoute1: mock:ouput
+toRoute2: file:data/output?fileName=Success.txt
+dbRoute1: jdbc:dataSource
+message: MOCK Environment
+---
+spring:
+  profiles: dev
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/localDB
+    username: postgres
+    password: postgres
+    jdbc-url: jdbc:postgresql://localhost:5432/localDB
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: user_email
+    password: email_password
+    properties.mail.smtp.auth: true
+    properties.mail.smtp.starttls.enable: true
+mailTo: to_email
+mailFrom: from_email
+
+startRoute: timer:myTimer?period=10000
+fromRoute: file:data/input?delete=true&readLock=none&moveFailed=error
+toRoute1: file:data/output?allowNullBody=true
+toRoute2: file:data/output?fileName=Success.txt
+dbRoute1: jdbc:dataSource
+message: DEV Environment
+---
+spring:
+  profiles: stage
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/localDB
+    username: postgres
+    password: postgres
+    jdbc-url: jdbc:postgresql://localhost:5432/localDB
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: user_email
+    password: email_password
+    properties.mail.smtp.auth: true
+    properties.mail.smtp.starttls.enable: true
+mailTo: to_email
+mailFrom: from_email
+
+startRoute: timer:myTimer?period=10000
+fromRoute: file:data/input?delete=true&readLock=none&moveFailed=error
+toRoute1: file:data/output?allowNullBody=true
+toRoute2: file:data/output?fileName=Success.txt
+dbRoute1: jdbc:dataSource
+message: STAGE Environment
+---
+spring:
+  profiles: prod
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/localDB
+    username: postgres
+    password: postgres
+    jdbc-url: jdbc:postgresql://localhost:5432/localDB
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: user_email
+    password: email_password
+    properties.mail.smtp.auth: true
+    properties.mail.smtp.starttls.enable: true
+mailTo: to_email
+mailFrom: from_email
+
+startRoute: timer:myTimer?period=10000
+fromRoute: file:data/input?delete=true&readLock=none&moveFailed=error
+toRoute1: file:data/output?allowNullBody=true
+toRoute2: file:data/output?fileName=Success.txt
+dbRoute1: jdbc:dataSource
+message: PROD Environment
