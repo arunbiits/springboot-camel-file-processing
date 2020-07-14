@@ -1,2 +1,0 @@
-type,sku#,itemdescription,price
-ADD,,Samsung TV,500

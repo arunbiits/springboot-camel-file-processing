@@ -1,15 +1,14 @@
 package io.arun.learning.camel.route;
 
+import io.arun.learning.camel.processor.HealthCheckProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.test.spring.CamelSpringBootRunner;
-import org.apache.camel.test.spring.DisableJmx;
-import org.apache.camel.test.spring.MockEndpoints;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.TestTemplate;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,7 +20,7 @@ import org.springframework.test.context.ActiveProfiles;
 @RunWith(CamelSpringBootRunner.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @SpringBootTest
-public class SimpleCamelRouteMockTest extends CamelTestSupport {
+public class HealthCheckRouteTest extends CamelTestSupport {
 
     @Autowired
     CamelContext camelContext;
@@ -38,6 +37,13 @@ public class SimpleCamelRouteMockTest extends CamelTestSupport {
         return camelContext;
     }
 
+    @Autowired
+    HealthCheckProcessor healthCheckProcessor;
+
+    @Override
+    public RouteBuilder createRouteBuilder(){
+        return new HealthCheckRoute();
+    }
 
     @Before
     public void setUp(){
@@ -45,16 +51,11 @@ public class SimpleCamelRouteMockTest extends CamelTestSupport {
     }
 
     @Test
-    public void testMoveFileMock() throws InterruptedException {
-        String msg = "type,sku#,itemdescription,price\n" +
-                "ADD,100,Samsung TV,500\n" +
-                "ADD,101,LG TV,400";
-        String fileName = "fileTest.txt";
-        MockEndpoint mockEndpoint = getMockEndpoint(environment.getProperty("toRoute1"));
-        mockEndpoint.expectedMessageCount(1);
-        mockEndpoint.expectedBodiesReceived(msg);
-        producerTemplate.sendBodyAndHeader(environment.getProperty("startRoute"),msg,"env",environment.getProperty("spring.profiles.active"));
-        assertMockEndpointsSatisfied();
+    public void healthRouteTest() {
+        String input = "{\"status\":\"UP\"}";
+        System.out.println(environment.getProperty("spring.profiles.active"));
+        String response =(String) producerTemplate.requestBodyAndHeader(environment.getProperty("healthRoute"),input,"env", environment.getProperty("spring.profiles.active"));
+        System.out.println("Response -> "+response);
+        assertEquals(input,response);
     }
 }
-

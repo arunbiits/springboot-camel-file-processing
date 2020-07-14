@@ -53,7 +53,7 @@ public class SimpleCamelRoute extends RouteBuilder {
         onException(DataException.class).log(LoggingLevel.ERROR,"DataException in Route: ${body}").process(mailProcessor)
                /* .maximumRedeliveries(3).redeliveryDelay(3000).backOffMultiplier(2).retryAttemptedLogLevel(LoggingLevel.ERROR)*/;
 
-        from("{{startRoute}}")
+        from("{{startRoute}}").routeId("mainRoute")
                 .log("Timer invoked and the message is "+env.getProperty("message"))
                 .choice()
                     .when(header("env").isNotEqualTo("mock"))

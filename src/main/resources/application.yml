@@ -4,6 +4,11 @@ spring:
 camel:
   springboot:
     shutdownTimeout: 10
+    health.indicator.enabled: true
+
+management:
+  security:
+    enabled: false
 ---
 spring:
   profiles: mock
@@ -29,6 +34,7 @@ fromRoute: file:data/input?delete=true&readLock=none&moveFailed=error
 toRoute1: mock:ouput
 toRoute2: file:data/output?fileName=Success.txt
 dbRoute1: jdbc:dataSource
+healthRoute: direct:health
 message: MOCK Environment
 ---
 spring:
@@ -42,8 +48,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: user_email
-    password: email_password
+    username: your_email
+    password: your_password
     properties.mail.smtp.auth: true
     properties.mail.smtp.starttls.enable: true
 mailTo: to_email
@@ -54,6 +60,7 @@ fromRoute: file:data/input?delete=true&readLock=none&moveFailed=error
 toRoute1: file:data/output?allowNullBody=true
 toRoute2: file:data/output?fileName=Success.txt
 dbRoute1: jdbc:dataSource
+healthRoute: timer:myTimer2?period=10000
 message: DEV Environment
 ---
 spring:
@@ -80,6 +87,7 @@ fromRoute: file:data/input?delete=true&readLock=none&moveFailed=error
 toRoute1: file:data/output?allowNullBody=true
 toRoute2: file:data/output?fileName=Success.txt
 dbRoute1: jdbc:dataSource
+healthRoute: timer:myTimer2?period=10000
 message: STAGE Environment
 ---
 spring:
@@ -106,4 +114,5 @@ fromRoute: file:data/input?delete=true&readLock=none&moveFailed=error
 toRoute1: file:data/output?allowNullBody=true
 toRoute2: file:data/output?fileName=Success.txt
 dbRoute1: jdbc:dataSource
+healthRoute: timer:myTimer2?period=10000
 message: PROD Environment
